@@ -5,17 +5,20 @@ function startsWith($haystack, $needle) {
     return (substr($haystack, 0, $length) === $needle);
 }
 
+ini_set('display_errors', 'On');
+error_reporting(E_ALL);
+
 function html_response() {
     header('Content-type: text/html; charset=UTF-8');
     ?>
 <!doctype html>
 <html>
 <head>
-    <meta name="viewport" content="width=device-width" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
 </head>
 <body lang=en>
-<!-- User Agent: "<?= $_SERVER['HTTP_USER_AGENT'] ?>" -->
-<input type=text name=ip value="<?= $_SERVER['REMOTE_ADDR'] ?>" readonly=1 />
+    <!-- User Agent: "<?= $_SERVER['HTTP_USER_AGENT'] ?>" -->
+    <code id="address"><?= $_SERVER['REMOTE_ADDR'] ?></code>
 </body>
 </html>
 <?php
@@ -25,7 +28,6 @@ function plain_response() {
     header('Content-type: text/plain; charset=UTF-8');
 
     echo $_SERVER['REMOTE_ADDR'] . "\n";
-
 }
 
 
