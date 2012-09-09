@@ -10,6 +10,9 @@ function html_response() {
     ?>
 <!doctype html>
 <html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+</head>
 <body lang=en>
 <!-- User Agent: "<?= $_SERVER['HTTP_USER_AGENT'] ?>" -->
 <input type=text name=ip value="<?= $_SERVER['REMOTE_ADDR'] ?>" readonly=1 />
