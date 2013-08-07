@@ -50,6 +50,12 @@ if (startswith($agent, 'curl/')) {
     $html = False;
 } else if (startswith($agent, 'Wget/')) {
     $html = False;
+} else if (startswith($agent, 'python-requests/')) {
+    $html = False;
+} else if (startswith($agent, 'PycURL/')) {
+    $html = False;
+} else if ($agent == 'Ruby') {
+    $html = False;
 }
 
 if ($html) {
