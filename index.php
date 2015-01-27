@@ -8,8 +8,11 @@ function startsWith($haystack, $needle) {
 ini_set('display_errors', 'On');
 error_reporting(E_ALL);
 
-function html_response() {
+function html_response($remote_addr, $remote_hostname) {
     header('Content-type: text/html; charset=UTF-8');
+    $whois_url = "http://whois.arin.net/rest/ip/$remote_addr.txt";
+    $whois_url_html = "http://whois.arin.net/rest/ip/$remote_addr.html";
+    $whois = file_get_contents($whois_url);
     ?>
 <!doctype html>
 <html>
@@ -30,16 +33,21 @@ function html_response() {
 </head>
 <body lang=en>
     <!-- User Agent: "<?= $_SERVER['HTTP_USER_AGENT'] ?>" -->
-    <code id="address"><?= $_SERVER['REMOTE_ADDR'] ?></code>
+    <code id="address"><?= $remote_addr ?></code><br />
+    <code><?= $remote_hostname ?></code><br /></br>
+
+    <pre><a href="<?= htmlspecialchars($whois_url_html) ?>"><?= htmlspecialchars($whois_url_html) ?></a></pre>
+    <pre style="margin-left: 1em;"><?= htmlspecialchars($whois) ?></pre>
+
 </body>
 </html>
 <?php
 }
 
-function plain_response() {
+function plain_response($remote_addr, $remote_hostname) {
     header('Content-type: text/plain; charset=UTF-8');
 
-    echo $_SERVER['REMOTE_ADDR'] . "\n";
+    echo $remote_addr . "\n";
 }
 
 
@@ -58,10 +66,18 @@ if (startswith($agent, 'curl/')) {
     $html = False;
 }
 
+$remote_addr = $_SERVER['REMOTE_ADDR'];
+$remote_hostname = gethostbyaddr($remote_addr);
+
+// PHP doesn't seem to understand how return codes work
+if ($remote_hostname == $remote_addr) {
+    $remote_hostname = null;
+}
+
 if ($html) {
-    html_response();
+    html_response($remote_addr, $remote_hostname);
 } else {
-    plain_response();
+    plain_response($remote_addr, $remote_hostname);
 }
 
 ?>
