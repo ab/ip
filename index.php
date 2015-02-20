@@ -62,6 +62,8 @@ if (startswith($agent, 'curl/')) {
     $html = False;
 } else if (startswith($agent, 'PycURL/')) {
     $html = False;
+} else if (startswith($agent, 'rest-client/')) {
+    $html = False;
 } else if ($agent == 'Ruby') {
     $html = False;
 }
