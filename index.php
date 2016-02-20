@@ -10,9 +10,10 @@ error_reporting(E_ALL);
 
 function html_response($remote_addr, $remote_hostname) {
     header('Content-type: text/html; charset=UTF-8');
-    $whois_url = "http://whois.arin.net/rest/ip/$remote_addr.txt";
-    $whois_url_html = "http://whois.arin.net/rest/ip/$remote_addr.html";
-    $whois = file_get_contents($whois_url);
+
+    $whois_url = "https://whois.arin.net/rest/ip/$remote_addr.txt";
+    $whois_url_html = "https://whois.arin.net/rest/ip/$remote_addr.html";
+    // $whois_data = file_get_contents($whois_url);
     ?>
 <!doctype html>
 <html>
@@ -30,15 +31,27 @@ function html_response($remote_addr, $remote_hostname) {
         var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
       })();
     </script>
+    <script language="javascript" type="text/javascript">
+      function resizeIframe(obj) {
+        var height = document.body.scrollHeight - document.getElementById('upper').scrollHeight;
+        obj.style.height = height + 'px';
+      }
+    </script>
 </head>
 <body lang=en>
+  <div id="upper">
     <!-- User Agent: "<?= $_SERVER['HTTP_USER_AGENT'] ?>" -->
     <code id="address"><?= $remote_addr ?></code><br />
-    <code><?= $remote_hostname ?></code><br /></br>
+<?php if ($remote_hostname) { ?>
+    <code><?= $remote_hostname ?></code><br />
+<?php } ?>
 
     <pre><a href="<?= htmlspecialchars($whois_url_html) ?>"><?= htmlspecialchars($whois_url_html) ?></a></pre>
-    <pre style="margin-left: 1em;"><?= htmlspecialchars($whois) ?></pre>
-
+    <?php /* <pre style="margin&#45;left: 1em;"><?= htmlspecialchars($whois_data) ?></pre> */ ?>
+  </div>
+  <div id="lower">
+    <iframe sandbox id="whois_iframe" src="<?= htmlspecialchars($whois_url) ?>" frameborder="0" scrolling="auto" style="width:100%; height: 30em" onload="resizeIframe(this)"></iframe>
+  </div>
 </body>
 </html>
 <?php
@@ -50,31 +63,42 @@ function plain_response($remote_addr, $remote_hostname) {
     echo $remote_addr . "\n";
 }
 
+if (empty($_SERVER['HTTP_USER_AGENT'])) {
+    $html = False;
+    $agent = '';
+} else {
+    $agent = $_SERVER['HTTP_USER_AGENT'];
 
-$agent = $_SERVER['HTTP_USER_AGENT'];
-
-$html = True;
-if (startswith($agent, 'curl/')) {
-    $html = False;
-} else if (startswith($agent, 'Wget/')) {
-    $html = False;
-} else if (startswith($agent, 'python-requests/')) {
-    $html = False;
-} else if (startswith($agent, 'PycURL/')) {
-    $html = False;
-} else if (startswith($agent, 'rest-client/')) {
-    $html = False;
-} else if ($agent == 'Ruby') {
-    $html = False;
+    $html = True;
+    if (startswith($agent, 'curl/')) {
+        $html = False;
+    } else if (startswith($agent, 'Wget/')) {
+        $html = False;
+    } else if (startswith($agent, 'python-requests/')) {
+        $html = False;
+    } else if (startswith($agent, 'PycURL/')) {
+        $html = False;
+    } else if (startswith($agent, 'rest-client/')) {
+        $html = False;
+    } else if ($agent == 'Ruby') {
+        $html = False;
+    }
 }
+
 
 $remote_addr = $_SERVER['REMOTE_ADDR'];
-$remote_hostname = gethostbyaddr($remote_addr);
 
-// PHP doesn't seem to understand how return codes work
-if ($remote_hostname == $remote_addr) {
-    $remote_hostname = null;
+// validate that IP address is numeric only
+if (!preg_match('/\A[0-9.:]+\z/', $remote_addr)) {
+    $remote_addr = '0.0.0.0';
 }
+
+/*
+ * PHP's built-in gethostbyaddr() is so dumb I'm too mad to explain.
+ * Significantly, it has no way to specify a timeout.
+ * Use dig(1) instead.
+ */
+$remote_hostname = shell_exec('dig +short -x ' . escapeshellarg($remote_addr) . ' 2>&1');
 
 if ($html) {
     html_response($remote_addr, $remote_hostname);
