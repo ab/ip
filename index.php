@@ -89,7 +89,7 @@ if (empty($_SERVER['HTTP_USER_AGENT'])) {
 $remote_addr = $_SERVER['REMOTE_ADDR'];
 
 // validate that IP address is numeric only
-if (!preg_match('/\A[0-9.:]+\z/', $remote_addr)) {
+if (!preg_match('/\A[0-9a-f.:]+\z/', $remote_addr)) {
     $remote_addr = '0.0.0.0';
 }
 
