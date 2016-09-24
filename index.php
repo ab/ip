@@ -40,10 +40,10 @@ function html_response($remote_addr, $remote_hostname) {
 </head>
 <body lang=en>
   <div id="upper">
-    <!-- User Agent: "<?= $_SERVER['HTTP_USER_AGENT'] ?>" -->
-    <code id="address"><?= $remote_addr ?></code><br />
+    <!-- User Agent: "<?= htmlspecialchars($_SERVER['HTTP_USER_AGENT']) ?>" -->
+    <code id="address"><?= htmlspecialchars($remote_addr) ?></code><br />
 <?php if ($remote_hostname) { ?>
-    <code><?= $remote_hostname ?></code><br />
+    <code><?= htmlspecialchars($remote_hostname) ?></code><br />
 <?php } ?>
 
     <pre><a href="<?= htmlspecialchars($whois_url_html) ?>"><?= htmlspecialchars($whois_url_html) ?></a></pre>
