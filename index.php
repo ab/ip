@@ -41,11 +41,16 @@ function html_response($remote_addr, $remote_hostname) {
 <body lang=en>
   <div id="upper">
     <!-- User Agent: "<?= htmlspecialchars($_SERVER['HTTP_USER_AGENT']) ?>" -->
+
     <code id="address"><?= htmlspecialchars($remote_addr) ?></code><br />
 <?php if ($remote_hostname) { ?>
     <code><?= htmlspecialchars($remote_hostname) ?></code><br />
 <?php } ?>
 
+<?php if (!empty($_GET["headers"])) { ?>
+    <pre>Headers:
+<?= htmlspecialchars(print_r(getallheaders(), True)); ?></pre>
+<?php } ?>
     <pre><a href="<?= htmlspecialchars($whois_url_html) ?>"><?= htmlspecialchars($whois_url_html) ?></a></pre>
     <?php /* <pre style="margin&#45;left: 1em;"><?= htmlspecialchars($whois_data) ?></pre> */ ?>
   </div>
@@ -85,6 +90,13 @@ if (empty($_SERVER['HTTP_USER_AGENT'])) {
     }
 }
 
+if (isset($_GET["html"])) {
+    if ($_GET["html"]) {
+        $html = True;
+    } else {
+        $html = False;
+    }
+}
 
 $remote_addr = $_SERVER['REMOTE_ADDR'];
 
