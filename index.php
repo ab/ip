@@ -81,6 +81,8 @@ if (empty($_SERVER['HTTP_USER_AGENT'])) {
         $html = False;
     } else if (startswith($agent, 'python-requests/')) {
         $html = False;
+    } else if (startswith($agent, 'Python-urllib/')) {
+        $html = False;
     } else if (startswith($agent, 'PycURL/')) {
         $html = False;
     } else if (startswith($agent, 'rest-client/')) {
