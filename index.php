@@ -74,21 +74,11 @@ if (empty($_SERVER['HTTP_USER_AGENT'])) {
 } else {
     $agent = $_SERVER['HTTP_USER_AGENT'];
 
-    $html = True;
-    if (startswith($agent, 'curl/')) {
-        $html = False;
-    } else if (startswith($agent, 'Wget/')) {
-        $html = False;
-    } else if (startswith($agent, 'python-requests/')) {
-        $html = False;
-    } else if (startswith($agent, 'Python-urllib/')) {
-        $html = False;
-    } else if (startswith($agent, 'PycURL/')) {
-        $html = False;
-    } else if (startswith($agent, 'rest-client/')) {
-        $html = False;
-    } else if ($agent == 'Ruby') {
-        $html = False;
+    $html = False;
+    if (startswith($agent, 'Mozilla/')) {
+        $html = True;
+    } else if (startswith($agent, 'mozilla/')) {
+        $html = True;
     }
 }
 
