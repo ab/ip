@@ -87,6 +87,23 @@ if (isset($_GET["html"])) {
     }
 }
 
+if (isset($_GET["text"])) {
+    if ($_GET["text"]) {
+        $html = False;
+    }
+}
+
+if (isset($_GET["mode"])) {
+    $mode = $_GET["mode"];
+    if ($mode == "text") {
+        $html = False;
+    } elseif ($mode == "html") {
+        $html = True;
+    } elseif ($mode == "json") {
+        $html = False;
+    }
+}
+
 $remote_addr = $_SERVER['REMOTE_ADDR'];
 
 // validate that IP address is numeric only
